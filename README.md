@@ -1,19 +1,68 @@
 # README
 
-## About
+This repository demonstrates how a wails app (https://wails.io)
+can play sound. It works on Linux with
 
-This is the official Wails Vanilla template.
+    $ wails dev
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+but does not work with
 
-## Live Development
+    $ wails build
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
 
-## Building
+## Project Setup
 
-To build a redistributable, production mode package, use `wails build`.
+The wails project was created using the command
+
+    $ wails init -n pino
+
+Then I added a mp3 file `frontend/src/assets/sounds/alert.mp3` and 
+added audio code to `frontend/src/main.js`. Everytime the "greet"
+button is pressed, the sound file should start playing.
+
+
+## Wails Doctor Output
+
+    $ wails doctor
+    Wails CLI v2.2.0
+
+    Scanning system - Please wait (this may take a long time)...Done.
+
+    System
+    ------
+    OS:		Debian GNU/Linux
+    Version: 	11
+    ID:		debian
+    Go Version:	go1.19.3
+    Platform:	linux
+    Architecture:	amd64
+
+    Wails
+    ------
+    Version: 		v2.2.0
+    Package Manager: 	apt
+
+    Dependency	Package Name		Status		Version
+    ----------	------------		------		-------
+    *docker 	docker.io 		Available 	20.10.5+dfsg1-1+deb11u2
+    gcc 		build-essential 	Installed 	12.9
+    libgtk-3 	libgtk-3-dev 		Installed 	3.24.24-4+deb11u2
+    libwebkit 	libwebkit2gtk-4.0-dev 	Installed 	2.38.2-1~deb11u1
+    npm 		npm 			Installed 	8.19.2
+    *nsis 		nsis 			Available 	3.06.1-1
+    pkg-config 	pkg-config 		Installed 	0.29.2
+
+    * - Optional Dependency
+
+    Diagnosis
+    ---------
+    Your system is ready for Wails development!
+    Optional package(s) installation details: 
+    - docker: sudo apt install docker.io
+    - nsis: sudo apt install nsis
+
+
+
+    If Wails is useful to you or your company, please consider sponsoring the project:
+    https://github.com/sponsors/leaanthony
+
