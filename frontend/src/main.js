@@ -1,61 +1,37 @@
-import './style.css';
-import './app.css';
 
-import logo from './assets/images/logo-universal.png';
-import {Greet} from '../wailsjs/go/main/App';
-import alertMp3 from './assets/sounds/alert.mp3';
+let logElement = document.getElementById("log");
 
-document.querySelector('#app').innerHTML = `
-    <img id="logo" class="logo">
-    <div class="result" id="result">Please enter your name below 👇</div>
-    <div class="input-box" id="input">
-        <input class="input" id="name" type="text" autocomplete="off" />
-        <button class="btn" onclick="greet()">Greet</button>
-    </div>
-    <div class="result" id="audioResult"></div>
-`;
-document.getElementById('logo').src = logo;
-
-let nameElement = document.getElementById("name");
-nameElement.focus();
-let resultElement = document.getElementById("result");
-
-// initialize audio - this will work in 'wails dev' but not in 'wails build'
-let audioResultElement = document.getElementById("audioResult");
-let audio = new Audio(alertMp3);
-audio.addEventListener("error", (err) =>{
-    audioResultElement.innerHTML = "audio: error '" + err.message + "'";
+// initialize audio
+let audio = new Audio();
+audio.addEventListener("error", (err) => {
+    logElement.innerHTML += "audio: error '" + err.message + "'<br>";
 })
-audio.addEventListener("canplaythrough", () =>{
-    audioResultElement.innerHTML = "audio: canplaythrough";
+audio.addEventListener("canplaythrough", () => {
+    logElement.innerHTML += "audio: canplaythrough<br>";
 })
 
-// Setup the greet function
-window.greet = function () {
-    // Get name
-    let name = nameElement.value;
+// On linux, we fetch raw audio data in one large blob,
+// see also https://github.com/wailsapp/wails/issues/2090
+fetch("alert.mp3")
+    .then(response => response.blob())
+    .then(data => {
+        logElement.innerHTML += "audio: loaded data<br>"
+        console.log(data)
+        let audioUrl = URL.createObjectURL(data)
+        audio.src = audioUrl
+    }).catch(err => {
+        logElement.innerHTML += "audio: load error " + err.message + "<br>"
+    })
 
-    // Check if the input is empty
-    if (name === "") return;
 
-    // play audio - this will work in 'wails dev' but not in 'wails build'
+window.onPlaySound = function () {
+    // stop and rewind the audio in case the user clicks very fast and the audio is still playing
+    audio.pause()
+    audio.currentTime = 0
+    // start the audio
     audio.play().then(() => {
-        audioResultElement.innerHTML = "audio: play ok";
-    }).catch( (err) => {
-        audioResultElement.innerHTML = "audio: play error: " + err.message;
+        logElement.innerHTML += "audio: play ok<br>"
+    }).catch((err) => {
+        logElement.innerHTML += "audio: play error: " + err.message + "<br>"
     });
-
-    // Call App.Greet(name)
-    try {
-        Greet(name)
-            .then((result) => {
-                // Update result with data back from App.Greet()
-                resultElement.innerText = result;
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    } catch (err) {
-        console.error(err);
-    }
 };
